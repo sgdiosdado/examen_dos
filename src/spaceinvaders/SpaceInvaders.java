@@ -16,6 +16,8 @@ public class SpaceInvaders {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        Game g = new Game("Space Invaders", 720, 480);
+        g.start();
     }
     
 }
