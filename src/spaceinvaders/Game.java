@@ -51,6 +51,7 @@ public class Game implements Runnable {
     private boolean running;                // to set the game
     private ArrayList<Alien> aliens;
     private Shot shot;
+    private KeyManager keyManager;          // to manage the keyboard
 
     /**
      * to	create	title,	width	and	height	and	set	the	game	is	still	not	running
@@ -82,6 +83,15 @@ public class Game implements Runnable {
      */
     public int getHeight() {
         return height;
+    }
+    
+    /**
+     * Gets the KeyManager instance
+     * 
+     * @return <code>KeyManager</code> keyManager
+     */
+    public KeyManager getKeyManager(){
+        return keyManager;
     }
     
     /**

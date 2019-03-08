@@ -23,6 +23,7 @@ public class Alien extends Item {
     public Bomb getBomb() {
         
         return bomb;
+        
     }
 
 
