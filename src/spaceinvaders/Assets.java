@@ -24,9 +24,7 @@ public class Assets {
         background = ImageLoader.loadImage("/images/background.jpg");
         spritesheet = ImageLoader.loadImage("/images/spritesheet.png");
         
-        SpriteSheet assetsSpritesheet = new SpriteSheet(spritesheet);
-        
-        player = assetsSpritesheet.crop(143, 7, 16, 16);
+        player = spritesheet.getSubimage(144, 7, 15, 15);
     }
 
 }

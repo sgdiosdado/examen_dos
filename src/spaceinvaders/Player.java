@@ -58,7 +58,7 @@ public class Player extends Item{
             }
         
         // Collisions with the screen
-        if(getX() >= getGame().getWidth()){
+        if(getX() + getWidth() >= getGame().getWidth()){
             setX(getGame().getWidth() - getWidth());
         }
         if(getX() <= 0){

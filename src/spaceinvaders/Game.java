@@ -66,6 +66,7 @@ public class Game implements Runnable {
         this.width = width;
         this.height = height;
         this.running = false;
+        this.keyManager = new KeyManager();
     }
 
     /**
@@ -102,7 +103,6 @@ public class Game implements Runnable {
         display = new Display(title, width, height);
         display.getJframe().addKeyListener(keyManager);
         Assets.init();
-        keyManager = new KeyManager();
         player = new Player(getWidth()/2 - 48, getHeight() - 64, 48, 48, 5, this);
     }
 
