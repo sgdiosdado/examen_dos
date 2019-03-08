@@ -13,15 +13,20 @@ import java.awt.image.BufferedImage;
  */
 public class Assets {
 
-    public static BufferedImage background; // to store background image
-    public static BufferedImage player;     // to store the player image
+    public static BufferedImage background;     // to store background image
+    public static BufferedImage player;         // to store the player image
+    public static BufferedImage spritesheet;    // to store the spritesheet    
 
     /**
-     * initializing the images of the game
+     * Initializes the images of the game
      */
     public static void init() {
         background = ImageLoader.loadImage("/images/background.jpg");
-//        player = ImageLoader.loadImage("/images/mario.png");
+        spritesheet = ImageLoader.loadImage("/images/spritesheet.png");
+        
+        SpriteSheet assetsSpritesheet = new SpriteSheet(spritesheet);
+        
+        player = assetsSpritesheet.crop(143, 7, 16, 16);
     }
 
 }

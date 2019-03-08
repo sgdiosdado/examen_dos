@@ -49,6 +49,7 @@ public class Game implements Runnable {
     private int height;                     // height of the window
     private Thread thread;                  // thread to create the game
     private boolean running;                // to set the game
+    private Player player;
     private ArrayList<Alien> aliens;
     private Shot shot;
     private KeyManager keyManager;          // to manage the keyboard
@@ -101,6 +102,8 @@ public class Game implements Runnable {
         display = new Display(title, width, height);
         display.getJframe().addKeyListener(keyManager);
         Assets.init();
+        keyManager = new KeyManager();
+        player = new Player(getWidth()/2 - 48, getHeight() - 64, 48, 48, 5, this);
     }
 
     @Override
@@ -136,6 +139,8 @@ public class Game implements Runnable {
     }
 
     private void tick() {
+        keyManager.tick();
+        player.tick();
 
     }
 
@@ -153,6 +158,7 @@ public class Game implements Runnable {
         } else {
             g = bs.getDrawGraphics();
             g.drawImage(Assets.background, 0, 0, width, height, null);
+            player.render(g);
             bs.show();
             g.dispose();
         }
