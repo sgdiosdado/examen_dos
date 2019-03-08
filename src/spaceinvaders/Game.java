@@ -10,7 +10,6 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -40,6 +39,8 @@ public class Game implements Runnable {
     public static final int DELAY = 17;
     public static final int PLAYER_WIDTH = 15;
     public static final int PLAYER_HEIGHT = 10;
+    public static final int PADDING_TOP = 10;
+    public static final int PADDING_LEFT = 110;
 
     private BufferStrategy bs;              // to have several buffers when displaying
     private Graphics g;                     // to paint objects
@@ -50,7 +51,7 @@ public class Game implements Runnable {
     private Thread thread;                  // thread to create the game
     private boolean running;                // to set the game
     private Player player;
-    private ArrayList<Alien> aliens;
+    private LinkedList<Alien> aliens;
     private Shot shot;
     private KeyManager keyManager;          // to manage the keyboard
 
@@ -67,6 +68,7 @@ public class Game implements Runnable {
         this.height = height;
         this.running = false;
         this.keyManager = new KeyManager();
+        this.aliens = new LinkedList<Alien>();
     }
 
     /**
@@ -104,6 +106,12 @@ public class Game implements Runnable {
         display.getJframe().addKeyListener(keyManager);
         Assets.init();
         player = new Player(getWidth()/2 - 48, getHeight() - 64, 48, 48, 5, this);
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 10; j++){
+                aliens.add(new Alien(PADDING_LEFT + 48 * j, PADDING_TOP + i * 48, 48, 48, this));
+            }
+        }
+        
     }
 
     @Override
@@ -159,6 +167,9 @@ public class Game implements Runnable {
             g = bs.getDrawGraphics();
             g.drawImage(Assets.background, 0, 0, width, height, null);
             player.render(g);
+            for (int i = 0; i < aliens.size(); i++) {
+                aliens.get(i).render(g);
+            }
             bs.show();
             g.dispose();
         }
