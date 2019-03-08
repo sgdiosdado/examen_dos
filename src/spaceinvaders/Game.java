@@ -80,6 +80,8 @@ public class Game implements Runnable {
      */
     private void init() {
         display = new Display(title, width, height);
+        display.getJframe().addKeyListener(keyManager);
+        Assets.init();
     }
 
     @Override
@@ -131,6 +133,7 @@ public class Game implements Runnable {
             display.getCanvas().createBufferStrategy(3);
         } else {
             g = bs.getDrawGraphics();
+            g.drawImage(Assets.background, 0, 0, width, height, null);
             bs.show();
             g.dispose();
         }
