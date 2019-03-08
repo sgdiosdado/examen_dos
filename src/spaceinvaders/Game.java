@@ -32,6 +32,7 @@ public class Game implements Runnable {
     private int height;                     // height of the window
     private Thread thread;                  // thread to create the game
     private boolean running;                // to set the game
+    private KeyManager keyManager;          // to manage the keyboard
 
     /**
      * to	create	title,	width	and	height	and	set	the	game	is	still	not	running
@@ -63,6 +64,15 @@ public class Game implements Runnable {
      */
     public int getHeight() {
         return height;
+    }
+    
+    /**
+     * Gets the KeyManager instance
+     * 
+     * @return <code>KeyManager</code> keyManager
+     */
+    public KeyManager getKeyManager(){
+        return keyManager;
     }
     
     /**
