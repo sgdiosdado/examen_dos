@@ -14,10 +14,12 @@ import java.awt.Graphics;
 public class Alien extends Item {
     
     private Bomb bomb;
+    private Game game;
     
-    public Alien (int x, int y, int width, int height) {
+    public Alien (int x, int y, int width, int height, Game game) {
         super(x, y, width, height);
         bomb = new Bomb(x, y, width, height);
+        this.game = game;
     }
     
     public Bomb getBomb() {
@@ -33,6 +35,7 @@ public class Alien extends Item {
 
     @Override
     public void render(Graphics g) {
+        g.drawImage(Assets.alien, getX(), getY(), getWidth(), getHeight(), null);
     }
     
     // Bomb from the Alien
@@ -57,12 +60,18 @@ public class Alien extends Item {
         
         @Override
         public void tick() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+            // Collisions with the screen
+            if(getX() + getWidth() >= 700) {
+                setX(700 - getWidth());
+            }
+            if(getX() <= 0){
+                setX(0);
+            }
         }
 
         @Override
         public void render(Graphics g) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 
     }
