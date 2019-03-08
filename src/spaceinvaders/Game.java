@@ -10,6 +10,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -23,6 +24,22 @@ import java.util.logging.Logger;
  * @author inakijaneiro
  */
 public class Game implements Runnable {
+    
+    //Constants
+    public static final int BOARD_WIDTH = 358;
+    public static final int BOARD_HEIGHT = 350;
+    public static final int GROUND = 290;
+    public static final int BOMB_HEIGHT = 5;
+    public static final int ALIEN_HEIGHT = 12;
+    public static final int ALIEN_WIDTH = 12;
+    public static final int BORDER_RIGHT = 30;
+    public static final int BORDER_LEFT = 5;
+    public static final int GO_DOWN = 15;
+    public static final int NUMBER_OF_ALIENS_TO_DESTROY = 24;
+    public static final int CHANCE = 5;
+    public static final int DELAY = 17;
+    public static final int PLAYER_WIDTH = 15;
+    public static final int PLAYER_HEIGHT = 10;
 
     private BufferStrategy bs;              // to have several buffers when displaying
     private Graphics g;                     // to paint objects
@@ -32,6 +49,8 @@ public class Game implements Runnable {
     private int height;                     // height of the window
     private Thread thread;                  // thread to create the game
     private boolean running;                // to set the game
+    private ArrayList<Alien> aliens;
+    private Shot shot;
 
     /**
      * to	create	title,	width	and	height	and	set	the	game	is	still	not	running
