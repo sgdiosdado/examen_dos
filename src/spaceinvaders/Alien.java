@@ -61,7 +61,7 @@ public class Alien extends Item {
     @Override
     public void tick() {
         
-        if (game.getAlienMoveCounter() == 60) {
+        if (game.getAlienMoveCounter() == 60 ) {
             open = !open;
             if (getDirection() == Direction.RIGHT) {
                 setX(getX() + 24);
@@ -69,14 +69,13 @@ public class Alien extends Item {
                 setX(getX() - 24);
             }
         }
+        
         // Collisions with the screen
-        if(getX() + getWidth() >= getGame().getWidth()){
+        if(getX() + getWidth() > getGame().getWidth()){
             game.setMoveDown(true);
-            setX(getGame().getWidth() - getWidth());
         }
-        if(getX() <= 0){
+        if(getX() < 0){
             game.setMoveDown(true);
-            setX(0);
         }
         
     }

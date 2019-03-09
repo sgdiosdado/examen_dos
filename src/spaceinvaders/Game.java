@@ -222,8 +222,10 @@ public class Game implements Runnable {
                 alien.setY(alien.getY() + 48);
                 if (alien.getDirection() == Alien.Direction.LEFT) {
                     alien.setDirection(Alien.Direction.RIGHT);
+                    alien.setX(alien.getX() + 24);
                 } else if (alien.getDirection() == Alien.Direction.RIGHT) {
                     alien.setDirection(Alien.Direction.LEFT);
+                    alien.setX(alien.getX() - 24);
                 }
             }
             
