@@ -6,6 +6,7 @@
 package spaceinvaders;
 
 import java.awt.Graphics;
+import java.awt.Rectangle;
 
 /**
  *
@@ -38,6 +39,15 @@ public class Alien extends Item {
 
     public void setGame(Game game) {
         this.game = game;
+    }
+    
+    /**
+     * Creates a Rectangle instance and simulates the "hit box" of the ball
+     *
+     * @return new Circle
+     */
+    public Rectangle getHitbox() {
+        return new Rectangle(getX(), getY(), getWidth(), getHeight());
     }
 
     public Direction getDirection() {

@@ -56,6 +56,9 @@ public class Player extends Item{
             if (getGame().getKeyManager().right) {
                 setX(getX() + getSpeed());
             }
+            if(getGame().getKeyManager().shoot && getGame().getShot() == null){
+                getGame().playerShooting();
+            }
         
         // Collisions with the screen
         if(getX() + getWidth() >= getGame().getWidth()){
