@@ -65,7 +65,7 @@ public class Alien extends Item {
         if (game.getAlienMoveCounter() == 60) {
             open = !open;
             if (getDirection() == Direction.RIGHT) {
-                setX(getX() + 80);
+                setX(getX() + 24);
             } else if (getDirection() == Direction.LEFT) {
                 setX(getX() - 24);
             }
