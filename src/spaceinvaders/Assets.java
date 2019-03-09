@@ -19,6 +19,10 @@ public class Assets {
     public static BufferedImage alien2;         // to store the second alien image
     public static BufferedImage spritesheet;    // to store the spritesheet    
     public static BufferedImage playerShot;     // to store the player's shot
+    public static SoundClip shot;               // to store the shooting sound
+    public static SoundClip enemyDestroyed;     // to store the enemy destroyed sound
+    public static SoundClip shotDestroyed;      // to store the shot destroyed sound
+    public static SoundClip backgroundMusic;    // to store the background music
 
     /**
      * Initializes the images of the game
@@ -26,6 +30,11 @@ public class Assets {
     public static void init() {
         background = ImageLoader.loadImage("/images/background.jpg");
         spritesheet = ImageLoader.loadImage("/images/spritesheet.png");
+        
+        shot = new SoundClip("/sounds/shoot.wav");
+        shotDestroyed = new SoundClip("/sounds/shotDestroyed.wav");
+        enemyDestroyed = new SoundClip("/sounds/enemyDestroyed.wav");
+        backgroundMusic = new SoundClip("/sounds/backgroundMusic.wav");
 
         player = spritesheet.getSubimage(144, 7, 15, 15);
         alien = spritesheet.getSubimage(168, 80, 16, 16);

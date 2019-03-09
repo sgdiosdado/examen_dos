@@ -159,6 +159,8 @@ public class Game implements Runnable {
         display = new Display(title, width, height);
         display.getJframe().addKeyListener(keyManager);
         Assets.init();
+        Assets.backgroundMusic.setLooping(true);
+        Assets.backgroundMusic.play();
         player = new Player(getWidth() / 2 - 24, getHeight() - 64, 48, 48, 5, this);
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 10; j++) {
@@ -202,6 +204,7 @@ public class Game implements Runnable {
 
     public void playerShooting() {
         shot = new Shot(player.getX() + player.getWidth() / 2 - 4, player.getY() - 16, 8, 16);
+        Assets.shot.play();
     }
 
     private void tick() {
@@ -224,12 +227,14 @@ public class Game implements Runnable {
                 boolean shotExists = true;
                 for (int i = 0; i < aliens.size() && shotExists; i++) {
                     if (getShot().hits(aliens.get(i))) {
+                        Assets.enemyDestroyed.play();
                         aliens.remove(i);
                         shot = null;
                         shotExists = false;
                     }
                 }
                 if (shotExists && getShot().getY() <= 0) {
+                    Assets.shotDestroyed.play();
                     shot = null;
                 }
             }
@@ -284,7 +289,7 @@ public class Game implements Runnable {
     }
 
     /**
-     * setting	the	thead	for	the	game
+     * Setting the thread for the game
      */
     public synchronized void start() {
         if (!running) {
