@@ -15,7 +15,8 @@ public class Assets {
 
     public static BufferedImage background;     // to store background image
     public static BufferedImage player;         // to store the player image
-    public static BufferedImage alien;         // to store the alien image
+    public static BufferedImage alien;          // to store the alien image
+    public static BufferedImage alien2;         // to store the second alien image
     public static BufferedImage spritesheet;    // to store the spritesheet    
 
     /**
@@ -28,6 +29,8 @@ public class Assets {
         player = spritesheet.getSubimage(144, 7, 15, 15);
         
         alien = spritesheet.getSubimage(168, 80, 16, 16);
+        alien2 = spritesheet.getSubimage(145, 80, 16, 16);
+        
     }
 
 }
