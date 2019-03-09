@@ -13,32 +13,35 @@ import java.awt.Rectangle;
  * @author inakijaneiro
  */
 public class Alien extends Item {
-    
+
+    private boolean open;
     private Bomb bomb;
     private Game game;
-    
-    public Alien (int x, int y, int width, int height, Game game) {
+
+    public enum Direction {
+        RIGHT, LEFT
+    }
+    private Direction direction;
+
+    public Alien(int x, int y, int width, int height, Game game) {
         super(x, y, width, height);
         bomb = new Bomb(x, y, width, height);
         this.game = game;
+        this.direction = Direction.RIGHT;
     }
-    
+
     public Bomb getBomb() {
-        
         return bomb;
-        
     }
 
-
-    @Override
-    public void tick() {
+    public Game getGame() {
+        return game;
     }
 
-    @Override
-    public void render(Graphics g) {
-        g.drawImage(Assets.alien, getX(), getY(), getWidth(), getHeight(), null);
+    public void setGame(Game game) {
+        this.game = game;
     }
-    
+
     /**
      * Creates a Rectangle instance and simulates the "hit box" of the ball
      *
@@ -47,42 +50,43 @@ public class Alien extends Item {
     public Rectangle getHitbox() {
         return new Rectangle(getX(), getY(), getWidth(), getHeight());
     }
-    
-    // Bomb from the Alien
-    public class Bomb extends Item {
 
-        private boolean destroyed;
+    public Direction getDirection() {
+        return direction;
+    }
 
-        public Bomb(int x, int y, int width, int height) {
-            super(x, y, width, height);
-            setDestroyed(true);
-        }
+    public void setDirection(Direction direction) {
+        this.direction = direction;
+    }
 
-        public void setDestroyed(boolean destroyed) {
-        
-            this.destroyed = destroyed;
-        }
+    @Override
+    public void tick() {
 
-        public boolean isDestroyed() {
-        
-            return destroyed;
-        }
-        
-        @Override
-        public void tick() {
-        
-            // Collisions with the screen
-            if(getX() + getWidth() >= 700) {
-                setX(700 - getWidth());
-            }
-            if(getX() <= 0){
-                setX(0);
+        if (game.getAlienMoveCounter() == 60) {
+            open = !open;
+            if (getDirection() == Direction.RIGHT) {
+                setX(getX() + 24);
+            } else if (getDirection() == Direction.LEFT) {
+                setX(getX() - 24);
             }
         }
 
-        @Override
-        public void render(Graphics g) {
+        // Collisions with the screen
+        if (getX() + getWidth() > getGame().getWidth()) {
+            game.setMoveDown(true);
+        }
+        if (getX() < 0) {
+            game.setMoveDown(true);
         }
 
+    }
+
+    @Override
+    public void render(Graphics g) {
+        if (open) {
+            g.drawImage(Assets.alien, getX(), getY(), getWidth(), getHeight(), null);
+        } else {
+            g.drawImage(Assets.alien2, getX(), getY(), getWidth(), getHeight(), null);
+        }
     }
 }

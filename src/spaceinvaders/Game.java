@@ -47,6 +47,9 @@ public class Game implements Runnable {
     private Shot shot;                      // to store the shot
     private KeyManager keyManager;          // to manage the keyboard
 
+    private boolean moveDown;               // flag to move all instances of aliens down
+    int alienMoveCounter;                   // to move the aliens on a certain time;
+
     /**
      * to	create	title,	width	and	height	and	set	the	game	is	still	not	running
      *
@@ -88,6 +91,38 @@ public class Game implements Runnable {
      */
     public KeyManager getKeyManager() {
         return keyManager;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
+    public LinkedList<Alien> getAliens() {
+        return aliens;
+    }
+
+    public void setAliens(LinkedList<Alien> aliens) {
+        this.aliens = aliens;
+    }
+
+    public boolean moveDown() {
+        return moveDown;
+    }
+
+    public void setMoveDown(boolean moveDown) {
+        this.moveDown = moveDown;
+    }
+
+    public int getAlienMoveCounter() {
+        return alienMoveCounter;
+    }
+
+    public void setAlienMoveCounter(int alienMoveCounter) {
+        this.alienMoveCounter = alienMoveCounter;
     }
 
     /**
@@ -171,14 +206,19 @@ public class Game implements Runnable {
 
     private void tick() {
         keyManager.tick();
-
         if (getKeyManager().p && getKeyManager().isPressable()) {
             setPause(!isPaused());
             getKeyManager().setPressable(false);
         }
-        
+
         if (!isPaused()) {
             player.tick();
+            alienMoveCounter++;
+            for (int i = 0; i < aliens.size(); i++) {
+                Alien alien = aliens.get(i);
+                alien.tick();
+
+            }
             if (shot != null) {
                 shot.tick();
                 boolean shotExists = true;
@@ -193,7 +233,27 @@ public class Game implements Runnable {
                     shot = null;
                 }
             }
+            if (alienMoveCounter == 60) {
+                alienMoveCounter = 0;
+            }
+            /* IMPORTANTE que esto vaya despues del tick de alien*/
+            //moves ALL aliens down and changes their direction
+            if (moveDown()) {
+                setMoveDown(false);
+                for (int i = 0; i < aliens.size(); i++) {
+                    Alien alien = aliens.get(i);
 
+                    alien.setY(alien.getY() + 48);
+                    if (alien.getDirection() == Alien.Direction.LEFT) {
+                        alien.setDirection(Alien.Direction.RIGHT);
+                        alien.setX(alien.getX() + 24);
+                    } else if (alien.getDirection() == Alien.Direction.RIGHT) {
+                        alien.setDirection(Alien.Direction.LEFT);
+                        alien.setX(alien.getX() - 24);
+                    }
+                }
+
+            }
         }
     }
 
