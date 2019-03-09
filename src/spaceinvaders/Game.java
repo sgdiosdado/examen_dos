@@ -50,9 +50,9 @@ public class Game implements Runnable {
     private int height;                     // height of the window
     private Thread thread;                  // thread to create the game
     private boolean running;                // to set the game
-    private Player player;
-    private LinkedList<Alien> aliens;
-    private Shot shot;
+    private Player player;                  // to store the player
+    private LinkedList<Alien> aliens;       // to store all the aliens
+    private Shot shot;                      // to store the shot
     private KeyManager keyManager;          // to manage the keyboard
 
     /**
@@ -99,13 +99,21 @@ public class Game implements Runnable {
     }
     
     /**
+     * Gets the player's shot
+     * 
+     * @return <code>Shot</code> shot
+     */
+    public Shot getShot(){
+        return shot;
+    }
+    /**
      * Initialising the display window of the game
      */
     private void init() {
         display = new Display(title, width, height);
         display.getJframe().addKeyListener(keyManager);
         Assets.init();
-        player = new Player(getWidth()/2 - 48, getHeight() - 64, 48, 48, 5, this);
+        player = new Player(getWidth()/2 - 24, getHeight() - 64, 48, 48, 5, this);
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 10; j++){
                 aliens.add(new Alien(PADDING_LEFT + 48 * j, PADDING_TOP + i * 48, 48, 48, this));
@@ -116,7 +124,7 @@ public class Game implements Runnable {
 
     @Override
     public void run() {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //throw new UnsupportedOperationException("Not supported yet."); //To change bo dy of generated methods, choose Tools | Templates.
         init();
         // frames per second
         int fps = 60;
@@ -145,21 +153,38 @@ public class Game implements Runnable {
         }
         stop();
     }
-
+    
+    public void playerShooting(){
+        shot = new Shot(player.getX() + player.getWidth()/2 - 4, player.getY() - 16, 8, 16);
+    }
+    
     private void tick() {
         keyManager.tick();
         player.tick();
-
+        if(shot != null){
+          shot.tick();
+          boolean shotExists = true;
+          for(int i = 0; i < aliens.size() && shotExists; i++){
+            if(getShot().hits(aliens.get(i))){
+                aliens.remove(i);
+                shot = null;
+                shotExists = false;
+            }
+          }
+          if(shotExists && getShot().getY() <= 0){
+              shot = null;
+          }
+        }
     }
 
     private void render() {
         //get the buffer from the display
         bs = display.getCanvas().getBufferStrategy();
-        /*	if	it	is	null,	we	define	one	with	3	buffers	to	display	images	of
-	the	game,	if	not	null,	then	we	display every	image	of	the	game	but
-	after	clearing	the	Rectanlge,	getting	the	graphic	object	from	the	
-	buffer	strategy	element.	
-	show	the	graphic	and	dispose	it	to	the	trash	system
+        /* 
+         * If it is null, we define one with 3 buffers to display images of the game,
+         * if not null, then we display every image of the game but after clearing the
+         * Rectanlge, getting the graphic object from the buffer strategy element.	
+         * Show the graphic and dispose it to the trash system
          */
         if (bs == null) {
             display.getCanvas().createBufferStrategy(3);
@@ -169,6 +194,9 @@ public class Game implements Runnable {
             player.render(g);
             for (int i = 0; i < aliens.size(); i++) {
                 aliens.get(i).render(g);
+            }
+            if(shot != null){
+                shot.render(g);
             }
             bs.show();
             g.dispose();

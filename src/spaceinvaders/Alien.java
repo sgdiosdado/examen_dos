@@ -6,6 +6,7 @@
 package spaceinvaders;
 
 import java.awt.Graphics;
+import java.awt.Rectangle;
 
 /**
  *
@@ -36,6 +37,15 @@ public class Alien extends Item {
     @Override
     public void render(Graphics g) {
         g.drawImage(Assets.alien, getX(), getY(), getWidth(), getHeight(), null);
+    }
+    
+    /**
+     * Creates a Rectangle instance and simulates the "hit box" of the ball
+     *
+     * @return new Circle
+     */
+    public Rectangle getHitbox() {
+        return new Rectangle(getX(), getY(), getWidth(), getHeight());
     }
     
     // Bomb from the Alien
