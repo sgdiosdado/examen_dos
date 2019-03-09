@@ -6,8 +6,12 @@
 package spaceinvaders;
 
 import java.awt.Graphics;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.image.BufferStrategy;
 import java.util.LinkedList;
+import javax.sound.sampled.FloatControl;
 
 /**
  *
@@ -33,6 +37,7 @@ public class Game implements Runnable {
     public static final int PADDING_TOP = 10;
     public static final int PADDING_LEFT = 110;
 
+    private Thread drawer;                  // Thread to draw
     private BufferStrategy bs;              // to have several buffers when displaying
     private Graphics g;                     // to paint objects
     private Display display;                // to display in the game 
@@ -41,7 +46,9 @@ public class Game implements Runnable {
     private int height;                     // height of the window
     private Thread thread;                  // thread to create the game
     private boolean running;                // to set the game
-    private boolean paused;
+    private boolean paused;                 // to store the pause flag
+    private boolean gameEnded;              // to store if the game is over
+    private int score;                      // to store the score
     private Player player;                  // to store the player
     private LinkedList<Alien> aliens;       // to store all the aliens
     private Shot shot;                      // to store the shot
@@ -51,11 +58,11 @@ public class Game implements Runnable {
     int alienMoveCounter;                   // to move the aliens on a certain time;
 
     /**
-     * to	create	title,	width	and	height	and	set	the	game	is	still	not	running
+     * To create title,	width and height and set the game is still not running
      *
-     * @param	title	to	set	the	title	of	the	window
-     * @param	width	to	set	the	width	of	the	window
-     * @param	height	to	set	the	height	of	the	window
+     * @param title to set the title of the window
+     * @param width to set the width of the window
+     * @param height to set the height of the window
      */
     public Game(String title, int width, int height) {
         this.title = title;
@@ -93,34 +100,92 @@ public class Game implements Runnable {
         return keyManager;
     }
 
+    /**
+     * Gets the Player instance
+     *
+     * @return <code>Player</code> player
+     */
     public Player getPlayer() {
         return player;
     }
 
+    /**
+     * Gets the score
+     *
+     * @return <code>int</code> score
+     */
+    public int getScore() {
+        return score;
+    }
+
+    /**
+     * Sets the score
+     *
+     * @param score
+     */
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    /**
+     * Sets the player instance
+     *
+     * @param player
+     */
     public void setPlayer(Player player) {
         this.player = player;
     }
 
+    /**
+     * Gets the Alien linked-list instance
+     *
+     * @return <code>LinkedList<Alien></code> aliens
+     */
     public LinkedList<Alien> getAliens() {
         return aliens;
     }
 
+    /**
+     * Sets the Aliens linked-list instance
+     *
+     * @param aliens
+     */
     public void setAliens(LinkedList<Alien> aliens) {
         this.aliens = aliens;
     }
 
+    /**
+     * Gets moveDown value
+     *
+     * @return <boolean>moveDown</boolean>
+     */
     public boolean moveDown() {
         return moveDown;
     }
 
+    /**
+     * Sets moveDown value
+     *
+     * @param moveDown
+     */
     public void setMoveDown(boolean moveDown) {
         this.moveDown = moveDown;
     }
 
+    /**
+     * Gets the alienMoveCounter value
+     *
+     * @return <code>int</code> alienMoveCounter
+     */
     public int getAlienMoveCounter() {
         return alienMoveCounter;
     }
 
+    /**
+     * Sets alienMoveCounter value
+     *
+     * @param alienMoveCounter
+     */
     public void setAlienMoveCounter(int alienMoveCounter) {
         this.alienMoveCounter = alienMoveCounter;
     }
@@ -160,6 +225,7 @@ public class Game implements Runnable {
         display.getJframe().addKeyListener(keyManager);
         Assets.init();
         Assets.backgroundMusic.setLooping(true);
+        Assets.backgroundMusic.setVolume(-20.0f);
         Assets.backgroundMusic.play();
         player = new Player(getWidth() / 2 - 24, getHeight() - 64, 48, 48, 5, this);
         for (int i = 0; i < 5; i++) {
@@ -167,12 +233,12 @@ public class Game implements Runnable {
                 aliens.add(new Alien(PADDING_LEFT + 48 * j, PADDING_TOP + i * 48, 48, 48, this));
             }
         }
+        setScore(0);
 
     }
 
     @Override
     public void run() {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change bo dy of generated methods, choose Tools | Templates.
         init();
         // frames per second
         int fps = 60;
@@ -204,6 +270,7 @@ public class Game implements Runnable {
 
     public void playerShooting() {
         shot = new Shot(player.getX() + player.getWidth() / 2 - 4, player.getY() - 16, 8, 16);
+        Assets.shot.setVolume(-20.0f);
         Assets.shot.play();
     }
 
@@ -214,12 +281,15 @@ public class Game implements Runnable {
             getKeyManager().setPressable(false);
         }
 
-        if (!isPaused()) {
+        if (!isPaused() && !gameEnded) {
             player.tick();
             alienMoveCounter++;
             for (int i = 0; i < aliens.size(); i++) {
                 Alien alien = aliens.get(i);
                 alien.tick();
+                if (alien.getY() + alien.getHeight() >= getHeight() - 2 * getPlayer().getHeight()) {
+                    gameEnded = true;
+                }
 
             }
             if (shot != null) {
@@ -227,13 +297,16 @@ public class Game implements Runnable {
                 boolean shotExists = true;
                 for (int i = 0; i < aliens.size() && shotExists; i++) {
                     if (getShot().hits(aliens.get(i))) {
+                        Assets.enemyDestroyed.setVolume(-20.0f);
                         Assets.enemyDestroyed.play();
                         aliens.remove(i);
+                        setScore(getScore() + 10);
                         shot = null;
                         shotExists = false;
                     }
                 }
                 if (shotExists && getShot().getY() <= 0) {
+                    Assets.shotDestroyed.setVolume(-20.0f);
                     Assets.shotDestroyed.play();
                     shot = null;
                 }
@@ -276,6 +349,11 @@ public class Game implements Runnable {
         } else {
             g = bs.getDrawGraphics();
             g.drawImage(Assets.background, 0, 0, width, height, null);
+            g.setFont(new Font("Dialog", Font.BOLD, 24));
+            g.setColor(Color.WHITE);
+            g.drawString("Score: " + getScore(), 12, 24);
+            g.setColor(Color.white);
+            g.drawLine(0, getHeight() - 2 * getPlayer().getHeight(), getWidth(), getHeight() - 2 * getPlayer().getHeight());
             player.render(g);
             for (int i = 0; i < aliens.size(); i++) {
                 aliens.get(i).render(g);
@@ -283,15 +361,21 @@ public class Game implements Runnable {
             if (shot != null) {
                 shot.render(g);
             }
+            if (isPaused()) {
+                g.drawImage(Assets.pause, 0, 0, width, height, null);
+            }
+            if(gameEnded){
+                g.drawImage(Assets.gameOverScreen, 0, 0, width, height, null);
+            }
             bs.show();
             g.dispose();
         }
     }
 
-    /**
-     * Setting the thread for the game
-     */
-    public synchronized void start() {
+/**
+ * Setting the thread for the game
+ */
+public synchronized void start() {
         if (!running) {
             running = true;
             thread = new Thread(this);

@@ -12,6 +12,7 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.AudioSystem;
 import java.io.IOException;
 import java.net.URL;
+import javax.sound.sampled.FloatControl;
 
 /**
  *
@@ -24,6 +25,8 @@ public class SoundClip {
     private boolean looping = false;
     private int repeat = 0;
     private String filename = "";
+    private FloatControl gain;
+
 
     /**
      * Constructor default
@@ -96,6 +99,15 @@ public class SoundClip {
         this.filename = filename; 
     }
 
+    /**
+     * Sets volume of the clip
+     * From -80.0 to 6.02 decibels
+     * @param decibels 
+     */
+    public void setVolume(float decibels){
+        gain = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+        gain.setValue((float)decibels);
+    }
     /** 
      * Metodo de acceso que regresa el nombre del archivo.
      * @return filename es un <code>String</code> con el nombre del archivo. 
