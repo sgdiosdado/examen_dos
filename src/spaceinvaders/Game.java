@@ -5,25 +5,16 @@
  */
 package spaceinvaders;
 
-import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
-import java.io.File;
-import java.util.Formatter;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
  * @author inakijaneiro
  */
 public class Game implements Runnable {
-    
+
     //Constants
     public static final int BOARD_WIDTH = 358;
     public static final int BOARD_HEIGHT = 350;
@@ -50,6 +41,7 @@ public class Game implements Runnable {
     private int height;                     // height of the window
     private Thread thread;                  // thread to create the game
     private boolean running;                // to set the game
+    private boolean paused;
     private Player player;                  // to store the player
     private LinkedList<Alien> aliens;       // to store all the aliens
     private Shot shot;                      // to store the shot
@@ -88,24 +80,43 @@ public class Game implements Runnable {
     public int getHeight() {
         return height;
     }
-    
+
     /**
      * Gets the KeyManager instance
-     * 
+     *
      * @return <code>KeyManager</code> keyManager
      */
-    public KeyManager getKeyManager(){
+    public KeyManager getKeyManager() {
         return keyManager;
     }
-    
+
     /**
      * Gets the player's shot
-     * 
+     *
      * @return <code>Shot</code> shot
      */
-    public Shot getShot(){
+    public Shot getShot() {
         return shot;
     }
+
+    /**
+     * Gets the game pause status
+     *
+     * @return <code>boolean</code> paused
+     */
+    public boolean isPaused() {
+        return paused;
+    }
+
+    /**
+     * Sets the game pause status
+     *
+     * @param paused
+     */
+    public void setPause(boolean paused) {
+        this.paused = paused;
+    }
+
     /**
      * Initialising the display window of the game
      */
@@ -113,13 +124,13 @@ public class Game implements Runnable {
         display = new Display(title, width, height);
         display.getJframe().addKeyListener(keyManager);
         Assets.init();
-        player = new Player(getWidth()/2 - 24, getHeight() - 64, 48, 48, 5, this);
+        player = new Player(getWidth() / 2 - 24, getHeight() - 64, 48, 48, 5, this);
         for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < 10; j++){
+            for (int j = 0; j < 10; j++) {
                 aliens.add(new Alien(PADDING_LEFT + 48 * j, PADDING_TOP + i * 48, 48, 48, this));
             }
         }
-        
+
     }
 
     @Override
@@ -153,27 +164,36 @@ public class Game implements Runnable {
         }
         stop();
     }
-    
-    public void playerShooting(){
-        shot = new Shot(player.getX() + player.getWidth()/2 - 4, player.getY() - 16, 8, 16);
+
+    public void playerShooting() {
+        shot = new Shot(player.getX() + player.getWidth() / 2 - 4, player.getY() - 16, 8, 16);
     }
-    
+
     private void tick() {
         keyManager.tick();
-        player.tick();
-        if(shot != null){
-          shot.tick();
-          boolean shotExists = true;
-          for(int i = 0; i < aliens.size() && shotExists; i++){
-            if(getShot().hits(aliens.get(i))){
-                aliens.remove(i);
-                shot = null;
-                shotExists = false;
+
+        if (getKeyManager().p && getKeyManager().isPressable()) {
+            setPause(!isPaused());
+            getKeyManager().setPressable(false);
+        }
+        
+        if (!isPaused()) {
+            player.tick();
+            if (shot != null) {
+                shot.tick();
+                boolean shotExists = true;
+                for (int i = 0; i < aliens.size() && shotExists; i++) {
+                    if (getShot().hits(aliens.get(i))) {
+                        aliens.remove(i);
+                        shot = null;
+                        shotExists = false;
+                    }
+                }
+                if (shotExists && getShot().getY() <= 0) {
+                    shot = null;
+                }
             }
-          }
-          if(shotExists && getShot().getY() <= 0){
-              shot = null;
-          }
+
         }
     }
 
@@ -195,7 +215,7 @@ public class Game implements Runnable {
             for (int i = 0; i < aliens.size(); i++) {
                 aliens.get(i).render(g);
             }
-            if(shot != null){
+            if (shot != null) {
                 shot.render(g);
             }
             bs.show();
