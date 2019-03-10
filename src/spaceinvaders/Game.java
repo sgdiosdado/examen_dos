@@ -51,7 +51,8 @@ public class Game implements Runnable {
     private int alienMoveCounter;           // to move the aliens on a certain time
     private int alienTickLimit;             // the limit in which the movement is done
     private int alienBombCounter;           // to spawn an alien bomb on a certain time
-
+    private boolean win;                    // when the player won the game
+    
     /**
      * To create title,	width and height and set the game is still not running
      *
@@ -255,6 +256,9 @@ public class Game implements Runnable {
         Assets.backgroundMusic.setLooping(true);
         Assets.backgroundMusic.setVolume(-20.0f);
         Assets.backgroundMusic.play();
+        setScore(0);
+        setLives(3);
+        setAlienTickLimit(60);
         player = new Player(getWidth() / 2 - 24, getHeight() - 64, 48, 48, 5, this);
         aliens.clear();
         alienShots.clear();
@@ -475,7 +479,12 @@ public class Game implements Runnable {
         if (getKeyManager().r) {
             restart();
         }
-
+        
+        if (aliens.size() == 0) {
+            win = true;
+            gameEnded = true;
+        }
+        
         if (!isPaused() && !gameEnded) {
             player.tick();
             setAlienMoveCounter(getAlienMoveCounter() + 1);
@@ -492,7 +501,7 @@ public class Game implements Runnable {
 
             }
             
-            if (alienBombCounter == getAlienTickLimit() * 2) {
+            if (alienBombCounter >= getAlienTickLimit() * 2) {
                 int alienDropperIndex = (int)(Math.random() * (aliens.size()));
                 Alien alienDropper = aliens.get(alienDropperIndex);
                 alienShots.add(new Bomb(alienDropper.getX() + alienDropper.getWidth() / 2,alienDropper.getY() + alienDropper.getHeight(), 16, 32));
@@ -564,6 +573,7 @@ public class Game implements Runnable {
                 restart();
                 getKeyManager().setPressable(false);
                 gameEnded = false;
+                win = false;
             }
         }
     }
@@ -604,8 +614,11 @@ public class Game implements Runnable {
             if (isPaused()) {
                 g.drawImage(Assets.pause, 0, 0, width, height, null);
             }
-            if(gameEnded){
+            if(gameEnded && !win){
                 g.drawImage(Assets.gameOverScreen, 0, 0, width, height, null);
+            }
+            else if (gameEnded && win) {
+                // Imagen aqui
             }
             bs.show();
             g.dispose();
