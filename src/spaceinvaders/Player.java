@@ -82,7 +82,7 @@ public class Player extends Item{
             if (getGame().getKeyManager().right) {
                 setX(getX() + getSpeed());
             }
-            if(getGame().getKeyManager().shoot && getGame().getShot() == null){
+            if(getGame().getKeyManager().shoot && getGame().getShot() == null && getGame().getKeyManager().isPressable()){
                 getGame().playerShooting();
             }
         

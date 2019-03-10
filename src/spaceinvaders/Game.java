@@ -243,6 +243,27 @@ public class Game implements Runnable {
         this.alienBombCounter = alienBombCounter;
     }
     
+    private void restart() {
+        Assets.backgroundMusic.setLooping(true);
+        Assets.backgroundMusic.setVolume(-20.0f);
+        Assets.backgroundMusic.play();
+        player = new Player(getWidth() / 2 - 24, getHeight() - 64, 48, 48, 5, this);
+        aliens.clear();
+        alienShots.clear();
+        if (shot != null) {
+            shot = null;
+        }
+        for (int i = 0; i < 5; i++) {
+            int spacing = 30;
+            for (int j = 0; j < 10; j++) {
+                aliens.add(new Alien(PADDING_LEFT + 48 * j + spacing, PADDING_TOP + i * 48, 48, 48, this));
+                spacing += 30;
+            }
+        }
+        setScore(0);
+
+    }
+    
     /**
      * Calls every save method from the classes and writes the score and lives
      * on a file
@@ -442,6 +463,10 @@ public class Game implements Runnable {
         if (getKeyManager().c) {
             load();
         }
+        
+        if (getKeyManager().r) {
+            restart();
+        }
 
         if (!isPaused() && !gameEnded) {
             player.tick();
@@ -521,6 +546,13 @@ public class Game implements Runnable {
                 if (getAlienTickLimit() >= 20) {
                     setAlienTickLimit(getAlienTickLimit() - 10);
                 }
+            }
+        }
+        if (gameEnded) {
+            if (getKeyManager().space) {
+                restart();
+                getKeyManager().setPressable(false);
+                gameEnded = false;
             }
         }
     }

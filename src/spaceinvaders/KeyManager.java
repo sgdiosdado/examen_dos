@@ -20,6 +20,8 @@ public class KeyManager implements KeyListener {
     public boolean p;           // flag to pause the game
     public boolean g;           // flag to save the game
     public boolean c;           // flag to load the game
+    public boolean r;           // flag to restart the game
+    public boolean space;           // flag to restart the game when finished
     public boolean movement;    // flag to denote the player has pressed/released a key
     private boolean pressable;  // flag to do a one time press that has lasting effect
     
@@ -54,7 +56,7 @@ public class KeyManager implements KeyListener {
         // set false to every key released
         keys[e.getKeyCode()] = false;
         movement = false;
-        if (e.getKeyCode() == KeyEvent.VK_P){
+        if (e.getKeyCode() == KeyEvent.VK_P || e.getKeyCode() == KeyEvent.VK_SPACE){
             setPressable(true);
         }
     }
@@ -69,6 +71,8 @@ public class KeyManager implements KeyListener {
         p = keys[KeyEvent.VK_P];
         g = keys[KeyEvent.VK_G];
         c = keys[KeyEvent.VK_C];
+        r = keys[KeyEvent.VK_R];
+        space = keys[KeyEvent.VK_SPACE];
     }
     
 }
