@@ -19,6 +19,7 @@ public class Assets {
     public static BufferedImage alien2;         // to store the second alien image
     public static BufferedImage spritesheet;    // to store the spritesheet    
     public static BufferedImage playerShot;     // to store the player's shot
+    public static BufferedImage alienShot;      // to store the alien's shot
     public static SoundClip shot;               // to store the shooting sound
     public static SoundClip enemyDestroyed;     // to store the enemy destroyed sound
     public static SoundClip shotDestroyed;      // to store the shot destroyed sound
@@ -41,6 +42,7 @@ public class Assets {
         alien2 = spritesheet.getSubimage(145, 80, 16, 16);
 
         playerShot = spritesheet.getSubimage(358, 3, 3, 8);
+        alienShot = spritesheet.getSubimage(350, 145, 3, 10);
     }
 
 }

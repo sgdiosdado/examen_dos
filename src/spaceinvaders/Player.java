@@ -6,6 +6,7 @@
 package spaceinvaders;
 
 import java.awt.Graphics;
+import java.awt.Rectangle;
 
 /**
  *
@@ -41,6 +42,10 @@ public class Player extends Item{
      */
     public int getSpeed(){
         return speed;
+    }
+    
+    public Rectangle getHitbox() {
+        return new Rectangle(getX(), getY(), getWidth(), getHeight());
     }
     
     /**

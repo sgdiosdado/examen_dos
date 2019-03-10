@@ -18,7 +18,7 @@ public class Shot extends Item {
     
     public Shot(int x, int y, int width, int height) {
         super(x, y, width, height);
-        this.speed = 4;
+        this.speed = 8;
     }
 
     /**
@@ -56,7 +56,7 @@ public class Shot extends Item {
      * @return <code>boolean</code>
      */
     public boolean hits(Object obj) {
-        return (obj instanceof Shot && getHitbox().intersects(((Shot) (obj)).getHitbox())
+        return (obj instanceof Bomb && getHitbox().intersects(((Bomb) (obj)).getHitbox())
                 || obj instanceof Alien && getHitbox().intersects(((Alien) (obj)).getHitbox()));
     }
     

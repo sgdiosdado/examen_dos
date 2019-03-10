@@ -15,8 +15,8 @@ import java.awt.Rectangle;
 public class Alien extends Item {
 
     private boolean open;
-    private Bomb bomb;
     private Game game;
+    private int speed;
 
     public enum Direction {
         RIGHT, LEFT
@@ -25,15 +25,19 @@ public class Alien extends Item {
 
     public Alien(int x, int y, int width, int height, Game game) {
         super(x, y, width, height);
-        bomb = new Bomb(x, y, width, height);
         this.game = game;
         this.direction = Direction.RIGHT;
+        this.speed = 12;
     }
 
-    public Bomb getBomb() {
-        return bomb;
+    public int getSpeed() {
+        return speed;
     }
 
+    public void setSpeed(int speed) {
+        this.speed = speed;
+    }
+    
     public Game getGame() {
         return game;
     }
@@ -62,12 +66,12 @@ public class Alien extends Item {
     @Override
     public void tick() {
 
-        if (game.getAlienMoveCounter() == 60) {
+        if (game.getAlienMoveCounter() == game.getAlienTickLimit()) {
             open = !open;
             if (getDirection() == Direction.RIGHT) {
-                setX(getX() + 24);
+                setX(getX() + getSpeed());
             } else if (getDirection() == Direction.LEFT) {
-                setX(getX() - 24);
+                setX(getX() - getSpeed());
             }
         }
 

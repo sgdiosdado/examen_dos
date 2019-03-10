@@ -6,6 +6,7 @@
 package spaceinvaders;
 
 import java.awt.Graphics;
+import java.awt.Rectangle;
 
 /**
  *
@@ -26,24 +27,25 @@ public class Bomb extends Item {
     }
 
     public boolean isDestroyed() {
-
         return destroyed;
     }
-
+    
+    public Rectangle getHitbox() {
+        return new Rectangle(getX(), getY(), getWidth(), getHeight());
+    }
+    
+    public boolean hits(Object obj) {
+        return (obj instanceof Player && getHitbox().intersects(((Player) (obj)).getHitbox()));
+    }
+    
     @Override
     public void tick() {
-
-        // Collisions with the screen
-        if(getX() + getWidth() >= 700) {
-            setX(700 - getWidth());
-        }
-        if(getX() <= 0){
-            setX(0);
-        }
+        setY(getY() + 4);
     }
 
     @Override
     public void render(Graphics g) {
+        g.drawImage(Assets.alienShot, getX(), getY(), getWidth(), getHeight(), null);
     }
 
 }
