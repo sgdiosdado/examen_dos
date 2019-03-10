@@ -15,9 +15,6 @@ import java.util.Formatter;
  */
 public class Player extends Item{
     
-    private final int START_Y = 280;
-    private final int START_X = 270;
-    
     private int speed;
     private Game game;
     

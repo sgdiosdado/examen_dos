@@ -43,20 +43,31 @@ public class Alien extends Item {
         }
     }
 
+    /**
+     * Gets the speed
+     * 
+     * @return speed
+     */
     public int getSpeed() {
         return speed;
     }
 
+    /**
+     * Sets speed
+     * 
+     * @param speed 
+     */
     public void setSpeed(int speed) {
         this.speed = speed;
     }
     
+    /**
+     * Gets the game
+     * 
+     * @return game
+     */
     public Game getGame() {
         return game;
-    }
-
-    public void setGame(Game game) {
-        this.game = game;
     }
 
     /**
@@ -67,11 +78,21 @@ public class Alien extends Item {
     public Rectangle getHitbox() {
         return new Rectangle(getX(), getY(), getWidth(), getHeight());
     }
-
+    
+    /**
+     * Gets the Direction of the alien
+     * 
+     * @return direction
+     */
     public Direction getDirection() {
         return direction;
     }
 
+    /**
+     * Sets the direction of the alien
+     * 
+     * @param direction
+     */
     public void setDirection(Direction direction) {
         this.direction = direction;
     }

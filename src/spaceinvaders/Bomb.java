@@ -19,22 +19,24 @@ public class Bomb extends Item {
 
     public Bomb(int x, int y, int width, int height) {
         super(x, y, width, height);
-        setDestroyed(true);
-    }
-
-    public void setDestroyed(boolean destroyed) {
-
-        this.destroyed = destroyed;
-    }
-
-    public boolean isDestroyed() {
-        return destroyed;
     }
     
+    /**
+     * Creates a Rectangle instance and simulates the "hit box" of the ball
+     *
+     * @return new Circle
+     */
     public Rectangle getHitbox() {
         return new Rectangle(getX(), getY(), getWidth(), getHeight());
     }
     
+    /**
+    * Checks if there was a collision with another instance and returns a
+    * boolean
+    *
+    * @param obj
+    * @return <code>boolean</code>
+    */
     public boolean hits(Object obj) {
         return (obj instanceof Player && getHitbox().intersects(((Player) (obj)).getHitbox()));
     }
