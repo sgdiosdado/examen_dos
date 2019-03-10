@@ -292,7 +292,7 @@ public class Game implements Runnable {
         }
         player.save(file);
         file.format("%s", getScore() + " ");
-        //file.format("%s", getLives() + " ");
+        file.format("%s", getLives() + " ");
         file.format("%s%s%s", getAlienMoveCounter() + " ", getAlienTickLimit() + " ", getAlienBombCounter() + " ");
         file.format("%s", alienShots.size() + " ");
 
@@ -356,9 +356,9 @@ public class Game implements Runnable {
 
             // Loads score and lives
             x = scanner.nextInt();
-            //y = scanner.nextInt();
+            y = scanner.nextInt();
             setScore(x);
-            //setLives(y);
+            setLives(y);
             x = scanner.nextInt();
             setAlienMoveCounter(x);
             x = scanner.nextInt();
