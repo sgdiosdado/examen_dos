@@ -455,6 +455,9 @@ public class Game implements Runnable {
             player.tick();
             setAlienMoveCounter(getAlienMoveCounter() + 1);
             alienBombCounter++;
+            if(lives == 0){
+                gameEnded = true;
+            }
             for (int i = 0; i < aliens.size(); i++) {
                 Alien alien = aliens.get(i);
                 alien.tick();
@@ -474,11 +477,11 @@ public class Game implements Runnable {
                 Bomb alienShot = alienShots.get(i);
                 alienShot.tick();
                 if (alienShots.get(i).hits(player)) {
+                        setLives(getLives() - 1);
+                        alienShots.remove(i);
                         Assets.enemyDestroyed.play();
-                        gameEnded = true;
                 }
             }
-    
             
             if (shot != null) {
                 shot.tick();
