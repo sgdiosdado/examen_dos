@@ -22,6 +22,7 @@ public class Assets {
     public static BufferedImage alienShot;      // to store the alien's shot
     public static BufferedImage pause;          // to store the pause image
     public static BufferedImage gameOverScreen; // to store the game over image
+    public static BufferedImage life;           // to store the life image
     public static SoundClip shot;               // to store the shooting sound
     public static SoundClip enemyDestroyed;     // to store the enemy destroyed sound
     public static SoundClip shotDestroyed;      // to store the shot destroyed sound
@@ -44,9 +45,9 @@ public class Assets {
         player = spritesheet.getSubimage(144, 7, 15, 15);
         alien = spritesheet.getSubimage(168, 80, 16, 16);
         alien2 = spritesheet.getSubimage(145, 80, 16, 16);
-
         playerShot = spritesheet.getSubimage(358, 3, 3, 8);
         alienShot = spritesheet.getSubimage(350, 145, 3, 10);
+        life = spritesheet.getSubimage(49, 9, 15, 14);
     }
 
 }

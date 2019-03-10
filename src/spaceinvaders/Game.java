@@ -19,21 +19,7 @@ import javax.sound.sampled.FloatControl;
  */
 public class Game implements Runnable {
 
-    //Constants
-    public static final int BOARD_WIDTH = 358;
-    public static final int BOARD_HEIGHT = 350;
-    public static final int GROUND = 290;
-    public static final int BOMB_HEIGHT = 5;
-    public static final int ALIEN_HEIGHT = 12;
-    public static final int ALIEN_WIDTH = 12;
-    public static final int BORDER_RIGHT = 30;
-    public static final int BORDER_LEFT = 5;
-    public static final int GO_DOWN = 15;
-    public static final int NUMBER_OF_ALIENS_TO_DESTROY = 24;
-    public static final int CHANCE = 5;
-    public static final int DELAY = 17;
-    public static final int PLAYER_WIDTH = 15;
-    public static final int PLAYER_HEIGHT = 10;
+    // Constants
     public static final int PADDING_TOP = 10;
     public static final int PADDING_LEFT = 110;
 
@@ -49,6 +35,7 @@ public class Game implements Runnable {
     private boolean paused;                 // to store the pause flag
     private boolean gameEnded;              // to store if the game is over
     private int score;                      // to store the score
+    private int lives;                      // to store lives;
     private Player player;                  // to store the player
     private LinkedList<Alien> aliens;       // to store all the aliens
     private LinkedList<Bomb> alienShots;     // to store all alien shots
@@ -76,6 +63,7 @@ public class Game implements Runnable {
         this.aliens = new LinkedList<Alien>();
         this.alienShots = new LinkedList<Bomb>(); 
         this.alienTickLimit = 60;
+        this.lives = 3;
     }
 
     /**
@@ -211,6 +199,26 @@ public class Game implements Runnable {
     public Shot getShot() {
         return shot;
     }
+
+    /**
+     * Gets lives
+     * 
+     * @return <code>int</code> lives
+     */
+    public int getLives() {
+        return lives;
+    }
+
+    /**
+     * Sets lives
+     * 
+     * @param lives 
+     */
+    public void setLives(int lives) {
+        this.lives = lives;
+    }
+    
+    
 
     /**
      * Gets the game pause status
@@ -405,6 +413,9 @@ public class Game implements Runnable {
             for (int i = 0; i < aliens.size(); i++) {
                 aliens.get(i).render(g);
             }
+            for (int i = 0; i < lives; i++) {
+                    g.drawImage(Assets.life, getWidth() - 40 - 32 * i, 4, 32, 32, null); // EL -5 es estetico
+                }
             if (shot != null) {
                 shot.render(g);
             }
