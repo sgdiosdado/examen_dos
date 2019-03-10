@@ -44,7 +44,6 @@ public class Game implements Runnable {
     private KeyManager keyManager;          // to manage the keyboard
     private Formatter file;                 // to store the saved game file.
     private Scanner scanner;                // to store the scanner to read a game file
-
     private boolean moveDown;               // flag to move all instances of aliens down
     private int alienMoveCounter;           // to move the aliens on a certain time
     private int alienTickLimit;             // the limit in which the movement is done
@@ -96,7 +95,24 @@ public class Game implements Runnable {
     public KeyManager getKeyManager() {
         return keyManager;
     }
-
+    
+    /**
+     * Gets if a sound was already played
+     * 
+     * @return <code>boolean</code> sounded
+     */
+    public boolean isSounded(){
+        return sounded;
+    }
+    
+    /**
+     * Sets sounded flag
+     * 
+     * @param sounded 
+     */
+    public void setSounded(boolean sounded){
+        this.sounded = sounded;
+    }
     /**
      * Gets the Player instance
      *
@@ -187,10 +203,18 @@ public class Game implements Runnable {
         this.alienMoveCounter = alienMoveCounter;
     }
 
+    /**
+     * Gets the alien tick limit
+     * @return <code>int</code> alienTickLimit
+     */
     public int getAlienTickLimit() {
         return alienTickLimit;
     }
 
+    /**
+     * Sets the alien tick limit
+     * @param alienTickLimit 
+     */
     public void setAlienTickLimit(int alienTickLimit) {
         this.alienTickLimit = alienTickLimit;
     }
@@ -242,14 +266,25 @@ public class Game implements Runnable {
         this.paused = paused;
     }
 
+    /**
+     * Gets the alien bomb counter
+     * 
+     * @return <code>int</code> alienBombCounter
+     */
     public int getAlienBombCounter() {
         return alienBombCounter;
     }
 
+    /**
+     * Sets the alien bomb counter
+     * 
+     * @param alienBombCounter 
+     */
     public void setAlienBombCounter(int alienBombCounter) {
         this.alienBombCounter = alienBombCounter;
     }
     
+    // Restarts the game to the original state
     private void restart() {
         Assets.backgroundMusic.setLooping(true);
         Assets.backgroundMusic.setVolume(-20.0f);
@@ -257,12 +292,14 @@ public class Game implements Runnable {
         setScore(0);
         setLives(3);
         setAlienTickLimit(60);
+        // Positions player
         player = new Player(getWidth() / 2 - 24, getHeight() - 64, 48, 48, 5, this);
         aliens.clear();
         alienShots.clear();
         if (shot != null) {
             shot = null;
         }
+        // Positions aliens
         for (int i = 0; i < 5; i++) {
             int spacing = 30;
             for (int j = 0; j < 10; j++) {
@@ -279,12 +316,15 @@ public class Game implements Runnable {
      * on a file
      */
     private void save(){
+        
+        // Generates a new game.txt
         try{
             file = new Formatter("game.txt");
         } catch (Exception e) {
             System.out.println("Hubo un problema con el guardado");
         }
         
+        // Saves the shot
         if (shot != null) {
             file.format("%s", "1 ");
             shot.save(file);
@@ -292,9 +332,15 @@ public class Game implements Runnable {
         else {
             file.format("%s", "0 ");
         }
+        
+        // Saves the player
         player.save(file);
+        
+        // Saves the lives and socre
         file.format("%s", getScore() + " ");
         file.format("%s", getLives() + " ");
+        
+        // Saves the aliens counters
         file.format("%s%s%s", getAlienMoveCounter() + " ", getAlienTickLimit() + " ", getAlienBombCounter() + " ");
         file.format("%s", alienShots.size() + " ");
 
@@ -312,6 +358,8 @@ public class Game implements Runnable {
 
             alien.save(file);
         }
+        
+        // Saves if the game was ended or not
         if (gameEnded) {
             file.format("%s", "1 ");
         }
@@ -387,6 +435,7 @@ public class Game implements Runnable {
                 aliens.add(new Alien(x, y, 48, 48, this, direction));
             }
             
+            // Loads if the game was ended or not
             x = scanner.nextInt();
             if (x == 1) {
                 gameEnded = true;
@@ -453,58 +502,77 @@ public class Game implements Runnable {
         stop();
     }
 
+    /**
+     * Creates a Shot instance and triggers the sounds
+     * 
+     */
     public void playerShooting() {
         shot = new Shot(player.getX() + player.getWidth() / 2 - 4, player.getY() - 16, 8, 16);
         Assets.shot.setVolume(-20.0f);
         Assets.shot.play();
     }
 
+    /**
+     * Ticks all the necessary instances
+     */
     private void tick() {
         keyManager.tick();
+        
+        // Sets the game paused and unpaused
         if (getKeyManager().p && getKeyManager().isPressable()) {
             setPause(!isPaused());
             getKeyManager().setPressable(false);
         }
         
+        // Saves the game
         if (getKeyManager().g) {
             save();
         }
         
+        // Loads a game
         if (getKeyManager().c) {
             load();
         }
         
+        // Restarts the game
         if (getKeyManager().r) {
             restart();
         }
         
-        if (aliens.size() == 0) {
+        // When all the aliens are dead, the player wins
+        if (aliens.isEmpty()) {
             win = true;
             gameEnded = true;
         }
         
+        // As the game is not paused or ended everything is getting ticked
         if (!isPaused() && !gameEnded) {
             player.tick();
             setAlienMoveCounter(getAlienMoveCounter() + 1);
             alienBombCounter++;
+            
+            // Game ends when the player runs out of lives
             if(lives == 0){
                 gameEnded = true;
             }
+            // Iterates over all the aliens, and if one reaches the limit, the game ends
             for (int i = 0; i < aliens.size(); i++) {
                 Alien alien = aliens.get(i);
                 alien.tick();
                 if (alien.getY() + alien.getHeight() >= getHeight() - 2 * getPlayer().getHeight()) {
                     gameEnded = true;
                 }
-
             }
             
+            // Randomly, generates a shot from the aliens
             if (alienBombCounter >= getAlienTickLimit() * 2) {
                 int alienDropperIndex = (int)(Math.random() * (aliens.size()));
                 Alien alienDropper = aliens.get(alienDropperIndex);
                 alienShots.add(new Bomb(alienDropper.getX() + alienDropper.getWidth() / 2,alienDropper.getY() + alienDropper.getHeight(), 16, 32));
                 alienBombCounter = 0;
             }
+            
+            // If an alien's shot hits the player, then it looses a life
             for (int i = 0; i < alienShots.size(); i++) {
                 Bomb alienShot = alienShots.get(i);
                 alienShot.tick();
@@ -515,10 +583,13 @@ public class Game implements Runnable {
                 }
             }
             
+            // While a player's shot exists, ticks the shot and all the collisions
             if (shot != null) {
                 shot.tick();
                 boolean shotExists = true;
                 for (int i = 0; i < aliens.size() && shotExists; i++) {
+                    
+                    // If the player's shot hits an alien, it's destroyed and the shot too
                     if (getShot().hits(aliens.get(i))) {
                         Assets.enemyDestroyed.setVolume(-20.0f);
                         Assets.enemyDestroyed.play();
@@ -528,6 +599,8 @@ public class Game implements Runnable {
                         shotExists = false;
                     }
                 }
+                
+                // If the player's shot hits an alien's shot, it's detroyed and the player's shot too
                 for (int i = 0; i < alienShots.size() && shotExists; i++) {   
                     if (getShot().hits(alienShots.get(i))) {
                         Assets.enemyDestroyed.play();
@@ -536,17 +609,21 @@ public class Game implements Runnable {
                         shotExists = false;
                     }
                 }
+                
+                // If the player's shot hits the top of the screen, the shot's destroyed
                 if (shotExists && getShot().getY() <= 0) {
                     Assets.shotDestroyed.setVolume(-20.0f);
                     Assets.shotDestroyed.play();
                     shot = null;
                 }
             }
+            
+            // When the alien counter surpasses the limit, it resets the counter to cero
             if (getAlienMoveCounter() >= getAlienTickLimit()) {
                 setAlienMoveCounter(0);
             }
-            /* IMPORTANTE que esto vaya despues del tick de alien*/
-            //moves ALL aliens down and changes their direction
+            
+            // Moves ALL aliens down and changes their direction
             if (moveDown()) {
                 setMoveDown(false);
                 for (int i = 0; i < aliens.size(); i++) {
@@ -566,6 +643,8 @@ public class Game implements Runnable {
                 }
             }
         }
+        // When the game ends, sets the flags to true or false, and waits for
+        // the player to press space to restart
         if (gameEnded) {
             Assets.backgroundMusic.stop();
             if(win && !sounded){
@@ -597,29 +676,44 @@ public class Game implements Runnable {
             display.getCanvas().createBufferStrategy(3);
         } else {
             g = bs.getDrawGraphics();
+            // Draws background, score and limit
             g.drawImage(Assets.background, 0, 0, width, height, null);
             g.setFont(new Font("Dialog", Font.BOLD, 24));
             g.setColor(Color.WHITE);
             g.drawString("Score: " + getScore(), 12, 24);
             g.setColor(Color.white);
             g.drawLine(0, getHeight() - 2 * getPlayer().getHeight(), getWidth(), getHeight() - 2 * getPlayer().getHeight());
+            
+            // Draws the player
             player.render(g);
+            
+            // Draws the alien's shots
             for (int i = 0; i < alienShots.size(); i++) {
                 Bomb alienShot = alienShots.get(i);
                 alienShot.render(g);
             }
+            
+            // Draws the aliens
             for (int i = 0; i < aliens.size(); i++) {
                 aliens.get(i).render(g);
             }
+            
+            // Draws the lives
             for (int i = 0; i < lives; i++) {
                     g.drawImage(Assets.life, getWidth() - 40 - 32 * i, 4, 32, 32, null); // EL -5 es estetico
-                }
+            }
+            
+            // If there's an instance of the shot, it's drawn
             if (shot != null) {
                 shot.render(g);
             }
+            
+            // If the game is paused, it draws the paused modal
             if (isPaused()) {
                 g.drawImage(Assets.pause, 0, 0, width, height, null);
             }
+            
+            // If the game ends, it draws a win or loose screen
             if(gameEnded && !win){
                 g.drawImage(Assets.gameOverScreen, 0, 0, width, height, null);
             }
