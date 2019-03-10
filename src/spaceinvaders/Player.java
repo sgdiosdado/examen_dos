@@ -7,6 +7,7 @@ package spaceinvaders;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.util.Formatter;
 
 /**
  *
@@ -46,6 +47,26 @@ public class Player extends Item{
     
     public Rectangle getHitbox() {
         return new Rectangle(getX(), getY(), getWidth(), getHeight());
+    }
+    
+    /**
+     * Writes it's data in the saving file
+     *
+     * @param file
+     */
+    public void save(Formatter file) {
+        file.format("%s%s", getX() + " ", getY() + " ");
+    }
+    
+    /**
+     * Loads it's necessary data from a file
+     *
+     * @param x
+     * @param y
+     */
+    public void load(int x, int y) {
+        setX(x);
+        setY(y);
     }
     
     /**

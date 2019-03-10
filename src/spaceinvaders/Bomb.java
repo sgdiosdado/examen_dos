@@ -7,6 +7,7 @@ package spaceinvaders;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.util.Formatter;
 
 /**
  *
@@ -36,6 +37,15 @@ public class Bomb extends Item {
     
     public boolean hits(Object obj) {
         return (obj instanceof Player && getHitbox().intersects(((Player) (obj)).getHitbox()));
+    }
+    
+    /**
+     * Writes it's data in the saving file
+     *
+     * @param file
+     */
+    public void save(Formatter file) {
+        file.format("%s%s", getX() + " ", getY() + " ");
     }
     
     @Override
