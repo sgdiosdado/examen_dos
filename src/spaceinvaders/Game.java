@@ -10,7 +10,10 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.image.BufferStrategy;
+import java.io.File;
+import java.util.Formatter;
 import java.util.LinkedList;
+import java.util.Scanner;
 import javax.sound.sampled.FloatControl;
 
 /**
@@ -54,6 +57,8 @@ public class Game implements Runnable {
     private LinkedList<Bomb> alienShots;     // to store all alien shots
     private Shot shot;                      // to store the shot
     private KeyManager keyManager;          // to manage the keyboard
+    private Formatter file;                 // to store the saved game file.
+    private Scanner scanner;
 
     private boolean moveDown;               // flag to move all instances of aliens down
     private int alienMoveCounter;           // to move the aliens on a certain time
@@ -230,6 +235,140 @@ public class Game implements Runnable {
         this.paused = paused;
     }
 
+    public int getAlienBombCounter() {
+        return alienBombCounter;
+    }
+
+    public void setAlienBombCounter(int alienBombCounter) {
+        this.alienBombCounter = alienBombCounter;
+    }
+    
+    /**
+     * Calls every save method from the classes and writes the score and lives
+     * on a file
+     */
+    private void save(){
+        try{
+            file = new Formatter("game.txt");
+        } catch (Exception e) {
+            System.out.println("Hubo un problema con el guardado");
+        }
+        
+        if (shot != null) {
+            file.format("%s", "1 ");
+            shot.save(file);
+        }
+        else {
+            file.format("%s", "0 ");
+        }
+        player.save(file);
+        file.format("%s", getScore() + " ");
+        //file.format("%s", getLives() + " ");
+        file.format("%s%s%s", getAlienMoveCounter() + " ", getAlienTickLimit() + " ", getAlienBombCounter() + " ");
+        file.format("%s", alienShots.size() + " ");
+
+        // Iterates over all the powerUps and write them in the file
+        for (int i = 0; i < alienShots.size(); i++) {
+            Bomb alienShot = alienShots.get(i);
+
+            alienShot.save(file);
+        }
+        file.format("%s", aliens.size() + " ");
+
+        // Iterates over all the bricks and write them in the file
+        for (int i = 0; i < aliens.size(); i++) {
+            Alien alien = aliens.get(i);
+
+            alien.save(file);
+        }
+        if (gameEnded) {
+            file.format("%s", "1 ");
+        }
+        else {
+            file.format("%s", "0 ");
+        }
+        
+        file.close();
+    }
+    
+    /**
+     * Reads the saved-game file and uses the load methods of the classes to
+     * restore the saved game
+     */
+    private void load() {
+        try {
+            int x, y, xspeed, yspeed, width, height;
+            String type;
+            scanner = new Scanner(new File("game.txt"));
+            
+            // 1 indicates there is a shot in the save file
+            if (scanner.nextInt() == 1) {
+            
+                // Loads shot attributes
+                x = scanner.nextInt();
+                y = scanner.nextInt();
+
+                if (shot != null) {
+                    shot.load(x, y); 
+                }
+                else {
+                    shot = new Shot(x, y, 8, 16);
+                }
+            } else {
+                if (shot != null) {
+                    shot = null;
+                }
+            }
+
+            // Loads player attributes
+            x = scanner.nextInt();
+            y = scanner.nextInt();
+            player.load(x, y);
+
+            // Loads score and lives
+            x = scanner.nextInt();
+            //y = scanner.nextInt();
+            setScore(x);
+            //setLives(y);
+            x = scanner.nextInt();
+            setAlienMoveCounter(x);
+            x = scanner.nextInt();
+            setAlienTickLimit(x);
+            x = scanner.nextInt();
+            setAlienBombCounter(x);
+
+            // Loads powerUps
+            int numOfAlienShots = scanner.nextInt();
+            alienShots.clear();
+            for (int i = 0; i < numOfAlienShots; i++) {
+                x = scanner.nextInt();
+                y = scanner.nextInt();
+                alienShots.add(new Bomb(x, y, 16, 32));
+            }
+
+            // Loads methbricks attributes
+            int numOfAliens = scanner.nextInt();
+            aliens.clear();
+            for (int i = 0; i < numOfAliens; i++) {
+                x = scanner.nextInt();
+                y = scanner.nextInt();
+                int direction = scanner.nextInt();
+                aliens.add(new Alien(x, y, 48, 48, this, direction));
+            }
+            
+            x = scanner.nextInt();
+            if (x == 1) {
+                gameEnded = true;
+            } else if (x == 0) {
+                gameEnded = false;
+            }
+            
+        } catch (Exception e) {
+            System.out.println("Hubo un problema con  carga.");
+        }
+
+    }
+
     /**
      * Initialising the display window of the game
      */
@@ -294,6 +433,14 @@ public class Game implements Runnable {
         if (getKeyManager().p && getKeyManager().isPressable()) {
             setPause(!isPaused());
             getKeyManager().setPressable(false);
+        }
+        
+        if (getKeyManager().g) {
+            save();
+        }
+        
+        if (getKeyManager().c) {
+            load();
         }
 
         if (!isPaused() && !gameEnded) {

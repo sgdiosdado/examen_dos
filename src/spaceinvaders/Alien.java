@@ -7,6 +7,7 @@ package spaceinvaders;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.util.Formatter;
 
 /**
  *
@@ -28,6 +29,18 @@ public class Alien extends Item {
         this.game = game;
         this.direction = Direction.RIGHT;
         this.speed = 12;
+    }
+    
+    public Alien(int x, int y, int width, int height, Game game, int direction) {
+        super(x, y, width, height);
+        this.game = game;
+        this.direction = Direction.RIGHT;
+        this.speed = 12;
+        if (direction == 0) {
+            this.direction = Direction.LEFT;
+        } else if (direction == 1) {
+            this.direction = Direction.RIGHT;
+        }
     }
 
     public int getSpeed() {
@@ -61,6 +74,31 @@ public class Alien extends Item {
 
     public void setDirection(Direction direction) {
         this.direction = direction;
+    }
+    
+    /**
+     * Writes it's data in the saving file
+     *
+     * @param file
+     */
+    public void save(Formatter file) {
+        file.format("%s%s", getX() + " ", getY() + " ");
+        if (direction == Direction.LEFT) {
+            file.format("%s", "0 ");
+        } else if (direction == Direction.RIGHT) {
+            file.format("%s", "1 ");
+        }
+    }
+    
+    /**
+     * Loads it's necessary data from a file
+     *
+     * @param x
+     * @param y
+     */
+    public void load(int x, int y) {
+        setX(x);
+        setY(y);
     }
 
     @Override

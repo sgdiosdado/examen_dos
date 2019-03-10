@@ -7,6 +7,7 @@ package spaceinvaders;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.util.Formatter;
 
 /**
  *
@@ -58,6 +59,26 @@ public class Shot extends Item {
     public boolean hits(Object obj) {
         return (obj instanceof Bomb && getHitbox().intersects(((Bomb) (obj)).getHitbox())
                 || obj instanceof Alien && getHitbox().intersects(((Alien) (obj)).getHitbox()));
+    }
+    
+    /**
+     * Writes it's data in the saving file
+     *
+     * @param file
+     */
+    public void save(Formatter file) {
+        file.format("%s%s", getX() + " ", getY() + " ");
+    }
+    
+    /**
+     * Loads it's necessary data from a file
+     *
+     * @param x
+     * @param y
+     */
+    public void load(int x, int y) {
+        setX(x);
+        setY(y);
     }
     
     @Override
