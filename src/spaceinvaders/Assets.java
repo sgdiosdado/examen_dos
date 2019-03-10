@@ -22,25 +22,35 @@ public class Assets {
     public static BufferedImage alienShot;      // to store the alien's shot
     public static BufferedImage pause;          // to store the pause image
     public static BufferedImage gameOverScreen; // to store the game over image
+    public static BufferedImage gameWonScreen;  // to store the game won image
     public static BufferedImage life;           // to store the life image
     public static SoundClip shot;               // to store the shooting sound
     public static SoundClip enemyDestroyed;     // to store the enemy destroyed sound
     public static SoundClip shotDestroyed;      // to store the shot destroyed sound
     public static SoundClip backgroundMusic;    // to store the background music
+    public static SoundClip jingleDeath;        // to store death jingle
+    public static SoundClip jingleWin;          // to store win jingle
+    public static SoundClip lifeLost;           // to store life lost sound
 
     /**
      * Initializes the images of the game
      */
     public static void init() {
+        // Images
         background = ImageLoader.loadImage("/images/background.jpg");
         spritesheet = ImageLoader.loadImage("/images/spritesheet.png");
         pause = ImageLoader.loadImage("/images/pause.png");
         gameOverScreen = ImageLoader.loadImage("/images/gameOver.png");
+        gameWonScreen = ImageLoader.loadImage("/images/gameWon.png");
         
+        // Sounds
         shot = new SoundClip("/sounds/shoot.wav");
         shotDestroyed = new SoundClip("/sounds/shotDestroyed.wav");
         enemyDestroyed = new SoundClip("/sounds/enemyDestroyed.wav");
         backgroundMusic = new SoundClip("/sounds/backgroundMusic.wav");
+        jingleDeath = new SoundClip("/sounds/jingleDeath.wav");
+        jingleWin = new SoundClip("/sounds/jingleWin.wav");
+        lifeLost = new SoundClip("/sounds/lifeLost.wav");
 
         player = spritesheet.getSubimage(144, 7, 15, 15);
         alien = spritesheet.getSubimage(168, 80, 16, 16);

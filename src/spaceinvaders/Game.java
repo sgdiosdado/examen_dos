@@ -8,13 +8,11 @@ package spaceinvaders;
 import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.image.BufferStrategy;
 import java.io.File;
 import java.util.Formatter;
 import java.util.LinkedList;
 import java.util.Scanner;
-import javax.sound.sampled.FloatControl;
 
 /**
  *
@@ -26,7 +24,6 @@ public class Game implements Runnable {
     public static final int PADDING_TOP = 10;
     public static final int PADDING_LEFT = 110;
 
-    private Thread drawer;                  // Thread to draw
     private BufferStrategy bs;              // to have several buffers when displaying
     private Graphics g;                     // to paint objects
     private Display display;                // to display in the game 
@@ -37,15 +34,16 @@ public class Game implements Runnable {
     private boolean running;                // to set the game
     private boolean paused;                 // to store the pause flag
     private boolean gameEnded;              // to store if the game is over
+    private boolean sounded;
     private int score;                      // to store the score
     private int lives;                      // to store lives;
     private Player player;                  // to store the player
     private LinkedList<Alien> aliens;       // to store all the aliens
-    private LinkedList<Bomb> alienShots;     // to store all alien shots
+    private LinkedList<Bomb> alienShots;    // to store all alien shots
     private Shot shot;                      // to store the shot
     private KeyManager keyManager;          // to manage the keyboard
     private Formatter file;                 // to store the saved game file.
-    private Scanner scanner;
+    private Scanner scanner;                // to store the scanner to read a game file
 
     private boolean moveDown;               // flag to move all instances of aliens down
     private int alienMoveCounter;           // to move the aliens on a certain time
@@ -273,7 +271,7 @@ public class Game implements Runnable {
             }
         }
         setScore(0);
-
+        sounded = false;
     }
     
     /**
@@ -513,7 +511,7 @@ public class Game implements Runnable {
                 if (alienShots.get(i).hits(player)) {
                         setLives(getLives() - 1);
                         alienShots.remove(i);
-                        Assets.enemyDestroyed.play();
+                        Assets.lifeLost.play();
                 }
             }
             
@@ -569,6 +567,14 @@ public class Game implements Runnable {
             }
         }
         if (gameEnded) {
+            Assets.backgroundMusic.stop();
+            if(win && !sounded){
+                Assets.jingleWin.play();
+                sounded = true;
+            } else if(!win && !sounded){
+                Assets.jingleDeath.play();
+                sounded = true;
+            } 
             if (getKeyManager().space) {
                 restart();
                 getKeyManager().setPressable(false);
@@ -618,7 +624,7 @@ public class Game implements Runnable {
                 g.drawImage(Assets.gameOverScreen, 0, 0, width, height, null);
             }
             else if (gameEnded && win) {
-                // Imagen aqui
+                g.drawImage(Assets.gameWonScreen, 0, 0, width, height, null);
             }
             bs.show();
             g.dispose();
